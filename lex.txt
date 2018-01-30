@@ -1,0 +1,5 @@
+miId1::012345+opaga+ngnamstyle
+miId2::hola
+t01::in
+t02::instance
+delimitador::break+return+hola
