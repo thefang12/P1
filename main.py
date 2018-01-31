@@ -34,6 +34,9 @@ class DFA:
             self.fi.append(val)
         else:
             self.fi.append(ord(val)-1)
+    def addNextShorthandTransition(self, c,i):
+        #TODO add recognized shorhand symbols and selected transitions 
+        pass
 
     def check(self, file, path, pos, debug=False):
         i = 0
@@ -72,15 +75,17 @@ def createAutomata(expr):
     wasOp = False
     shorthand = False
     for c in expr:
-       
+       # TODO add shorthand symbols
+        if shorthand:
+            aut.addNextShorthandTransition(c,i)
         # TODO add expr symbols
             # TODO add check symbol was defined
         if c == '\\'and not nextAsChar:
             nextAsChar = True
             continue
-         # TODO add shorthand symbols
-        if c == '$':
+        if c == '$' and not nextAsChar:
             shorthand = True
+            continue
         if c == '+' and not nextAsChar:
             # past was final state
             if(wasOp):
