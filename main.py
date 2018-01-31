@@ -1,10 +1,14 @@
+"""This module represents how to create an automata 
+    to validate a set of production rules
+    outputing a file with thre recognized identifiers
+"""
 import collections
-filename = "lex.txt"
-automatas = [collections.OrderedDict() for x in range(0, 127)]
-inFile = "in.txt"
+FILENAME = "lex.txt"
+AUTOMATAS = [collections.OrderedDict() for x in range(0, 127)]
+INFILE = "in.txt"
 
 class DFA:
-
+    """Represents a deterministic finite automata with functions """
     def __init__(self):
         # q0 = 0
         # Q = len(qt)
@@ -66,13 +70,17 @@ def createAutomata(expr):
     aut = DFA()
     cpast = ''
     wasOp = False
+    shorthand = False
     for c in expr:
-        # TODO add shorthand symbols
+       
         # TODO add expr symbols
             # TODO add check symbol was defined
         if c == '\\'and not nextAsChar:
-            nextAsChar is True
+            nextAsChar = True
             continue
+         # TODO add shorthand symbols
+        if c == '$':
+            shorthand = True
         if c == '+' and not nextAsChar:
             # past was final state
             if(wasOp):
@@ -102,7 +110,7 @@ def addAutomata(mid, expr):
     for el in aut.fi:
         import numbers
         if isinstance(el, numbers.Number):
-            automatas[el][mid] = aut
+            AUTOMATAS[el][mid] = aut
 
 # test rules
 
@@ -110,7 +118,7 @@ def addAutomata(mid, expr):
 def test(debug=False):
     currentKey = ''
     found = False
-    with open(inFile) as f:
+    with open(INFILE) as f:
         while True:
             found = False
             c = f.read(1)
@@ -119,17 +127,17 @@ def test(debug=False):
                 return
             if c != '\n':
                 print("Read a char test:", c)
-            autDict = automatas[ord(c)-1]
+            autDict = AUTOMATAS[ord(c)-1]
             for k, v in autDict.items():
                 currentKey = k
-                found = v.check(f, inFile, f.tell()-1, debug)
+                found = v.check(f, INFILE, f.tell()-1, debug)
                 if found:
                     print("Found symbol ", currentKey)
                 elif not (debug and c == '\n'):
                     print("no rule for symbol was found")
 
 # create lexical rules
-with open(filename) as f:
+with open(FILENAME) as f:
     while True:
         l = f.readline()
         if not l:
