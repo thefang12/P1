@@ -15,12 +15,15 @@ ShiftExpression: {Identifier} {Shiffts} {Identifier} + {Identifier} {Shiffts} {N
 EqualityExpression: {Identifier} {Equality} {Identifier} + {Identifier} {Equality} Numbers} + {Identifier} {Equality} {Decimals} +  {Identifier} {Equality} {{StringExpression}}
 
 LogicalExpression: {Identifier} {Logical} {Identifier} + {Identifier} {Logical} {Numbers} + {Identifier} {Logical} {{StringExpression}} + {Numbers} {Logical} {Identifier} + {{StringExpression}} {Logical} {Identifier} + {Numbers} {Logical} {Numbers} + {{StringExpression}} {Logical} {{StringExpression}}
+LogicalExpressionRecursive: {{LogicalExpression}} + {{LogicalExpression}} {{LogicalExpressionRecursive}}
+
+ConditionalExpression: {Logical} + {Logical} {Conditional} {{AssignmentExpression}} {Colon} {{AssignmentExpression}}
+
+AssignmentOperatorExpression: {Identifier} {AssignmentOperator} {Identifier} + {Identifier} {AssignmentOperator} {Numbers} + {Identifier} {AssignmentOperator} {{StringExpression}} + {Numbers} {AssignmentOperator} {Identifier} + {{StringExpression}} {AssignmentOperator} {Identifier} + {Numbers} {AssignmentOperator} {Numbers} + {{StringExpression}} {AssignmentOperator} {{StringExpression}}
 
 
-ConfitionalExpression: {Logical} + {Logical} {Conditional} {{AssignmentExpression}} {Colon} {{AssignmentExpression}}
+Expression: {{StringExpression}} + {{AssignmentExpression}} + {{AdditionExpression}} + {{SubstractionExpression}} + {{MultiplicativeExpression}} + {{ShiftExpression}} + {{EqualityExpression}} + {{LogicalExpressionRecursive}} + {{ConditionalExpression}} + {{AssignmentOperatorExpression}}
 
+Statement: {ReservedWords} + {Identifier} + {{Expression}} + {ReservedWords} {{Statement}} + {Identifier} {{Statement}} + {{Expression}} {{Statement}}
 
-Expression: AssignmentExpression ExpressionPrima
-ExpressionPrima: Coma AssignmentExpression
-
-IfStatement: If ParenthesisIni Expression
+IfStatement: If ParenthesisIni Expression  ParenthesisFin BracketsIni
