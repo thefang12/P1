@@ -1,5 +1,4 @@
-miId1::012345+opaga+ngnamstyle
-miId2::hola
-t01::in
-t02::instance
-delimitador::break+return+hola
+0x01::expr1
+0x04::expr
+if::if(0x03){0x04}
+while::while(0x00){0x01}
