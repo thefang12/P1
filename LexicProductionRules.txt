@@ -24,9 +24,11 @@ BracketsFin::}
 Semicolon:: ;
 Return::return
 
-numbers::0+1+2+3+4+5++6+7+8+9
+Numbers::0+1+2+3+4+5+6+7+8+9
+
+Decimals::Numbers Decimals + .Decimals + Numbers
 
 HexDigit::0+1+2+3+4+5+6+7+8+9+a+b+c+d+e+f+A+B+C+D+E+F
 
-HexIntegerLiteral:: 0xHexDigit + 0XHexDigit + HexIntegralLiteral HexDigit
+HexIntegerLiteral:: 0xHexDigit + 0XHexDigit HexIntegerLiteral + HexDigit HexIntegerLiteral + HexDigit
 
