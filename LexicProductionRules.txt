@@ -1,0 +1,32 @@
+###An Identifier is an IdentifierName that is not a ReservedWord
+
+
+ReservedWord:: break + case + catch + continue + debugger + default + delete + do + finally + in + instanceof + new+return + this + throw + try + typeof + var + void + with + class + const + enum + export + extends + import + super + implements + interface + let + package + private + protected + public + static + yield + null + true + false
+
+
+UnicodeLetter::q+w+e+r+t+y+u+i+o+p+a+s+d+f+g+h+j+k+l+z+x+c+v+b+n+m+Q+W+E+R+T+Y+U+I+O+P+A+S+D+F+G+H+J+K++L+Z+X+C+V+B+N+M
+
+IdentifierStart::UnicodeLeter+$+-+\
+
+IdentifierName::IdentifierStart+IdentifierName
+
+If::if
+Else::else
+For::for
+While::while
+ParenthesisIni::(
+ParenthesisFin::)
+Do::do
+Function::function
+Switch::switch
+BracketsIni::{
+BracketsFin::}
+Semicolon:: ;
+Return::return
+
+numbers::0+1+2+3+4+5++6+7+8+9
+
+HexDigit::0+1+2+3+4+5+6+7+8+9+a+b+c+d+e+f+A+B+C+D+E+F
+
+HexIntegerLiteral:: 0xHexDigit + 0XHexDigit + HexIntegralLiteral HexDigit
+
