@@ -22,8 +22,12 @@ ConditionalExpression: {Logical} + {Logical} {Conditional} {{AssignmentExpressio
 AssignmentOperatorExpression: {Identifier} {AssignmentOperator} {Identifier} + {Identifier} {AssignmentOperator} {Numbers} + {Identifier} {AssignmentOperator} {{StringExpression}} + {Numbers} {AssignmentOperator} {Identifier} + {{StringExpression}} {AssignmentOperator} {Identifier} + {Numbers} {AssignmentOperator} {Numbers} + {{StringExpression}} {AssignmentOperator} {{StringExpression}}
 
 
-Expression: {{StringExpression}} + {{AssignmentExpression}} + {{AdditionExpression}} + {{SubstractionExpression}} + {{MultiplicativeExpression}} + {{ShiftExpression}} + {{EqualityExpression}} + {{LogicalExpressionRecursive}} + {{ConditionalExpression}} + {{AssignmentOperatorExpression}}
+Expression: {{StringExpression}} + {{AssignmentExpression}} + {{AdditionExpression}} + {{SubstractionExpression}} + {{MultiplicativeExpression}} + {{ShiftExpression}} + {{EqualityExpression}} + {{LogicalExpressionRecursive}} + {{ConditionalExpression}} + {{AssignmentOperatorExpression}} + {Numbers}
 
 Statement: {ReservedWords} + {Identifier} + {{Expression}} + {ReservedWords} {{Statement}} + {Identifier} {{Statement}} + {{Expression}} {{Statement}}
 
-IfStatement: If ParenthesisIni Expression  ParenthesisFin BracketsIni
+IfStatement: {If} {ParenthesisIni} {{Expression}} {ParenthesisFin} {BracketsIni} {{Statement}} {BracketsFin}
+
+WhileStatement: {While} {ParenthesisIni} {{Expression}} {ParenthesisFin} {BracketsIni} {{Statement}} {BracketsFin}
+
+ForStatement: {For} {ParenthesisIni} {{AssignmentExpression}} {Semicolon} {{Expression}} {Semicolon} {{Expression}} {ParenthesisFin} {BracketsIni} {{Statement}} {BracketsFin} + {For} {ParenthesisIni} {Semicolon} {{Expression}} {Semicolon} {{Expression}} {ParenthesisFin} {BracketsIni} {{Statement}} {BracketsFin} + {For} {ParenthesisIni} {Semicolon} {Semicolon} {ParenthesisFin} {BracketsIni} {{Statement}} {BracketsFin}
