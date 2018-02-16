@@ -1,14 +1,25 @@
-###An Identifier is an IdentifierName that is not a ReservedWord
+###An Identifier is not a ReservedWord
 
-
-ReservedWord:: break + case + catch + continue + debugger + default + delete + do + finally + in + instanceof + new+return + this + throw + try + typeof + var + void + with + class + const + enum + export + extends + import + super + implements + interface + let + package + private + protected + public + static + yield + null + true + false
-
+ReservedWord:: break + case + catch + continue + debugger + default + do + finally + new+return + throw + try  + var + with + class + const + enum + export + extends + import + super + implements + interface + let + package + private + protected + public + static + yield + null
 
 UnicodeLetter::q+w+e+r+t+y+u+i+o+p+a+s+d+f+g+h+j+k+l+z+x+c+v+b+n+m+Q+W+E+R+T+Y+U+I+O+P+A+S+D+F+G+H+J+K++L+Z+X+C+V+B+N+M
 
-IdentifierStart::UnicodeLeter+$+-+\
+IdentifierStart::UnicodeLetter IdentifierStartPrima + $ IdentifierStartPrima + - IdentifierStartPrima + \ IdentifierStartPrima
+IdentifierStartPrima :: UnicodeLetter IdentifierStartPrima + Numbers IdentifierStartPrima
 
-IdentifierName::IdentifierStart+IdentifierName
+Identifier::IdentifierStartPrima + IdentifierStartPrima Identifier + UnicodeLetter
+
+Number::0+1+2+3+4+5+6+7+8+9
+
+Numbers:: Number + Number Numbers
+
+Decimals::Numbers Decimals + .Decimals + Numbers
+
+HexDigit::0+1+2+3+4+5+6+7+8+9+a+b+c+d+e+f+A+B+C+D+E+F
+
+HexIntegerLiteral:: 0xHexDigit + 0XHexDigit HexIntegerLiteral + HexDigit HexIntegerLiteral + HexDigit
+
+Alphabet:: UnicodeLetter + Numbers + UnicodeLetter Alphabet + Numbers Alphabet
 
 If::if
 Else::else
@@ -24,11 +35,37 @@ BracketsFin::}
 Semicolon:: ;
 Return::return
 
-Numbers::0+1+2+3+4+5+6+7+8+9
+This::this
 
-Decimals::Numbers Decimals + .Decimals + Numbers
+Delete::delete
+Void::void
+Typeof::typeof
+Addition::\+\+
+Substraction::--
+Plus::+
+Minus::-
+Denial::!
+True::true
+False::false
+Equal:: =
+Coma::,
+Colon:: \:
 
-HexDigit::0+1+2+3+4+5+6+7+8+9+a+b+c+d+e+f+A+B+C+D+E+F
 
-HexIntegerLiteral:: 0xHexDigit + 0XHexDigit HexIntegerLiteral + HexDigit HexIntegerLiteral + HexDigit
+Multiplicative:: * + / + %
+
+Shifts:: << + >> + >>>
+
+Relational:: < + > + <= + >= + instanceof + in
+
+Equality:: == + === + != + !===
+
+Logical:: & + ^ + | + && + ||
+
+Conditional::?
+
+AssignmentOperator:: *=	+ /= + %= + \+= + + -= + <<= + >>= + >>>= + &= + ^= + |=
+
+DobleQuotations::"
+SimpleQuotations::'
 
