@@ -204,9 +204,6 @@ def addAutomata(mid, expr,use):
                 tokenNum+=1
 
 
-
-
-
 def write2TokenStream(ident, val):
     pass
     ##TODO put token in the form #|val? from token dict
@@ -226,10 +223,18 @@ def write2TokenStream(ident, val):
 # prueba el archivo usando el diccionario lexico previamente creado
 def test():
     currentKey = ''
-    found = False
+    oldfound = False , -1,''
+    found = False , -1,''
+    size = 0
+    oldsize = 0
+    oldcurrentKey =''
     with open(INFILE) as f:
         while True:
-            found = False
+            oldcurrentKey =''
+            oldfound = False , -1,''
+            found = False , -1,''
+            size = 0
+            oldsize = 0
             c = f.read(1)
             if not c:
                 print("\nEnd of file\n")
@@ -241,18 +246,16 @@ def test():
                 currentKey = k
                 #print(k, " ",f.tell()-1, c)
                 found = v.checarToken(INFILE,f.tell()-1)
-                if found[0]:
-                    write2TokenStream(currentKey,found)
-                    print("Found symbol = ", currentKey , "val = ", found)
-                    f.seek(found[1])
-                    # while True:
-                    #     c = f.read(1)
-                    #     if not c:
-                    #         print("\nEnd of file\n")
-                    #         return
-                    #     if  c.isspace():
-                    #         break
-                    # break
+                size = found[1] - f.tell()+1
+                
+                if found[0] and size > oldsize:
+                    oldsize = size
+                    oldfound = found
+                    oldcurrentKey =currentKey
+            if oldfound[0]:
+                write2TokenStream(currentKey,oldfound)
+                print("Found symbol = ", oldcurrentKey , "val = ", oldfound)
+                f.seek(found[1])
                 # else:
                 #     print("no rule for symbol was found = ")
 
