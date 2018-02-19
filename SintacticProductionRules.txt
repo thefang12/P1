@@ -1,0 +1,33 @@
+
+
+StringExpression: {DobleQuotations} {Alphabet} {DobleQuotations} + {DobleQuotations} {Numbers} {DobleQuotations} + {DobleQuotations} {Alphabet} {Numbers} {DobleQuotations} + {DobleQuotations} {Numbers} {Alphabet} {DobleQuotations} + {DobleQuotations} {DobleQuotations}
+
+AssignmentExpression: {Identifier} {Equal} {Numbers} + {Identifier} {Equal} {{StringExpression}} + {Identifier} {Equal} {Identifier}
+
+AdditionExpression: {Identifier} {Addition} {Identifier} + {Identifier} {Addition} {Numbers} + {Identifier} {Addition} {{StringExpression}} + {Numbers} {Addition} {Identifier} + {{StringExpression}} {Addition} {Identifier} + {Numbers} {Addition} {Numbers} + {{StringExpression}} {Addition} {{StringExpression}}
+
+SubstractionExpression: {Identifier} {Multiplicative} {Identifier} + {Identifier} {Multiplicative} {Numbers} + {Identifier} {Multiplicative} {{StringExpression}} + {Numbers} {Multiplicative} {Identifier} + {{StringExpression}} {Multiplicative} {Identifier} + {Numbers} {Multiplicative} {Numbers} + {{StringExpression}} {Multiplicative} {{StringExpression}}
+
+MultiplicativeExpression: {Identifier} {Multiplicative} {Identifier} + {Identifier} {Multiplicative} {Numbers} + {Identifier} {Multiplicative} {{StringExpression}} + {Numbers} {Multiplicative} {Identifier} + {{StringExpression}} {Multiplicative} {Identifier} + {Numbers} {Multiplicative} {Numbers} + {{StringExpression}} {Multiplicative} {{StringExpression}}
+
+ShiftExpression: {Identifier} {Shiffts} {Identifier} + {Identifier} {Shiffts} {Numbers} + {Identifier} {Shiffts} {{StringExpression}} + {Numbers} {Shiffts} {Identifier} + {{StringExpression}} {Shiffts} {Identifier} + {Numbers} {Shiffts} {Numbers} + {{StringExpression}} {Shiffts} {{StringExpression}}
+
+EqualityExpression: {Identifier} {Equality} {Identifier} + {Identifier} {Equality} Numbers} + {Identifier} {Equality} {Decimals} +  {Identifier} {Equality} {{StringExpression}}
+
+LogicalExpression: {Identifier} {Logical} {Identifier} + {Identifier} {Logical} {Numbers} + {Identifier} {Logical} {{StringExpression}} + {Numbers} {Logical} {Identifier} + {{StringExpression}} {Logical} {Identifier} + {Numbers} {Logical} {Numbers} + {{StringExpression}} {Logical} {{StringExpression}}
+LogicalExpressionRecursive: {{LogicalExpression}} + {{LogicalExpression}} {{LogicalExpressionRecursive}}
+
+ConditionalExpression: {Logical} + {Logical} {Conditional} {{AssignmentExpression}} {Colon} {{AssignmentExpression}}
+
+AssignmentOperatorExpression: {Identifier} {AssignmentOperator} {Identifier} + {Identifier} {AssignmentOperator} {Numbers} + {Identifier} {AssignmentOperator} {{StringExpression}} + {Numbers} {AssignmentOperator} {Identifier} + {{StringExpression}} {AssignmentOperator} {Identifier} + {Numbers} {AssignmentOperator} {Numbers} + {{StringExpression}} {AssignmentOperator} {{StringExpression}}
+
+
+Expression: {{StringExpression}} + {{AssignmentExpression}} + {{AdditionExpression}} + {{SubstractionExpression}} + {{MultiplicativeExpression}} + {{ShiftExpression}} + {{EqualityExpression}} + {{LogicalExpressionRecursive}} + {{ConditionalExpression}} + {{AssignmentOperatorExpression}} + {Numbers}
+
+Statement: {ReservedWords} + {Identifier} + {{Expression}} + {ReservedWords} {{Statement}} + {Identifier} {{Statement}} + {{Expression}} {{Statement}}
+
+IfStatement: {If} {ParenthesisIni} {{Expression}} {ParenthesisFin} {BracketsIni} {{Statement}} {BracketsFin}
+
+WhileStatement: {While} {ParenthesisIni} {{Expression}} {ParenthesisFin} {BracketsIni} {{Statement}} {BracketsFin}
+
+ForStatement: {For} {ParenthesisIni} {{AssignmentExpression}} {Semicolon} {{Expression}} {Semicolon} {{Expression}} {ParenthesisFin} {BracketsIni} {{Statement}} {BracketsFin} + {For} {ParenthesisIni} {Semicolon} {{Expression}} {Semicolon} {{Expression}} {ParenthesisFin} {BracketsIni} {{Statement}} {BracketsFin} + {For} {ParenthesisIni} {Semicolon} {Semicolon} {ParenthesisFin} {BracketsIni} {{Statement}} {BracketsFin}
