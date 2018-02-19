@@ -40,7 +40,7 @@ class DFA:
         '''
         a = a + 1
         for el in l:
-            if len(self.qt[de][ord(el)-1]) != 0 and not ident:
+            if len(self.qt[de][ord(el)-1]) != 0:
                 return False , self.qt[de][ord(el)-1]
             if ident:
                 self.qt[de][ord(el)-1].add((ident,a))
@@ -105,17 +105,20 @@ class DFA:
             self.__class__.__name__, self.firstInput, len(self.qt), self.F)
         return a
 
-def getAutomata(ident):
-    if ident in AUTOMATAS:
+def getAutomata(ident,current):
+    if ident in AUTOMATAS  :
         return AUTOMATAS[ident]
+    elif ident == current.ident and current.firstInput:
+        return current
+
     return False
 
 #crea los automatas a usar para el analizador lexico
-def createAutomata(ident, expr):
+def createAutomata(identity, expr):
     
     a = 0
     de = 0
-    aut = DFA(ident)
+    aut = DFA(identity)
     wasNonTerminal = False
     wasOp = False
     shorthand = False
@@ -129,8 +132,10 @@ def createAutomata(ident, expr):
             if c != '}':
                 s+=c
                 continue
+                
+            wasNonTerminal = False
             print(s)
-            nested = getAutomata(s)
+            nested = getAutomata(s,aut)
             print(nested)
             if nested:
                 ident = s
@@ -166,7 +171,11 @@ def createAutomata(ident, expr):
         added = aut.addNextTransition(c,de,a,ident)
         if not added[0]:
             for el in added[1]:
-             de= el
+                if not isinstance(el, int ):
+                    de = el[1]
+                    s =''
+                    break
+                de= el
             continue
         if de == 0 and not ident:
             aut.addFirstInput(c)
