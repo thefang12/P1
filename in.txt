@@ -1,6 +1,4 @@
-if
-case
-broke
+if case broke
 fi
 ifr 
 vfr
@@ -9,3 +7,5 @@ vfr
 2
 1234
 0393.9
+if(){if(){ 091248091}}
+if(){091248091}

@@ -34,8 +34,8 @@ class DFA:
 
     def addNextTransition(self, l, de,a, ident = None):
         '''
-        adds a transition from the elements in l to state [i+1]
-        ident = <string> then adds transition from elements l to
+        adds a transition from the elements in l to state [a+1]
+        ident = <string> then adds transition from elements in l to
         [ident,i+1]
         '''
         a = a + 1
@@ -214,19 +214,8 @@ def addAutomata(mid, expr,use):
 
 
 def write2TokenStream(ident, val):
-    pass
-    ##TODO put token in the form #|val? from token dict
-    # ejemplo:
-    # 0
-    # 1
-    # 2
-    # 3|hola
-    # 4
-    # 5|adios
-    # 3|tre
-    # 2
-    # 3
-    # 4
+    with open("salida.sintactico",'a+') as f:
+        f.write(ident+"|"+val+"\n")
 
 # test rules
 # prueba el archivo usando el diccionario lexico previamente creado
@@ -262,7 +251,7 @@ def test():
                     oldfound = found
                     oldcurrentKey =currentKey
             if oldfound[0]:
-                write2TokenStream(currentKey,oldfound)
+                write2TokenStream(oldcurrentKey,oldfound[2])
                 print("Found symbol = ", oldcurrentKey , "val = ", oldfound)
                 f.seek(found[1])
                 # else:

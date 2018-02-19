@@ -1,0 +1,13 @@
+ReservedWord|if
+ReservedWord|case
+Identifier|ifr
+Numbers|0
+Numbers|1
+Numbers|2
+Numbers|1234
+Numbers|0393
+Numbers|9
+ReservedWord|if
+ReservedWord|if
+Numbers|091248091
+IfRW|if(){091248091}
