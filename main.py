@@ -1,7 +1,8 @@
-"""This module represents how to create an automata 
+'''
+This module represents how to create an automata 
     to validate a set of production rules
     outputing a file with thre recognized identifiers
-"""
+'''
 import collections
 FILENAME = "lex.txt"
 AUTOMATAS = {}
@@ -31,25 +32,23 @@ class DFA:
     def addFinalState(self, state):
         self.F.add(state)
 
-    def addNextTransition(self, l, de,a=None, ident = None):
+    def addNextTransition(self, l, de,a, ident = None):
         '''
         adds a transition from the elements in l to state [i+1]
         ident = <string> then adds transition from elements l to
         [ident,i+1]
         '''
-        nr = de + 1
-        if a:
-            nr = a + 1
+        a = a + 1
         for el in l:
             if len(self.qt[de][ord(el)-1]) != 0 and not ident:
-                return False
+                return False , self.qt[de][ord(el)-1]
             if ident:
-                self.qt[de][ord(el)-1].add((ident,nr))
+                self.qt[de][ord(el)-1].add((ident,a))
             else:
-                self.qt[de][ord(el)-1].add(nr)
-        if len(self.qt)-1 < nr:
+                self.qt[de][ord(el)-1].add(a)
+        if len(self.qt)-1 < a:
             self.qt.append([set() for x in range(0, CHARRANGE)])
-        return True
+        return True,0
         
 
     def addFirstInput(self, val):
@@ -59,103 +58,69 @@ class DFA:
         if len(val) == 1:
             self.firstInput.add(val) #identifier
         else:
-            self.firstInput |=AUTOMATAS[val].fi #state
+            self.firstInput |=AUTOMATAS[val].firstInput #state
 
-    def addNextShorthandTransition(self, c,i):
+    def addNextShorthandTransition(self, de,a, ident = None):
         #TODO add recognized shorhand symbols and selected transitions 
         pass
-    def checkNested(self, f):
-        i = 0
-        pos = -1
-        f.seek(f.tell()-1, 0)
-        while True:
-            c = f.read(1)
-            code = ord(c)-1
-            if  self.qt[i][code]:
-                i = self.qt[i][code]
-                if len(i) >1:
-                    #TODO add for to iter set
-                    pos = AUTOMATAS[i[0]].checkNested(f)
-                    if pos > -1:
-                        i = i[1]
-                        f.seek(pos,0)
+    def checarToken(self,path,pos,oldpos=-1, oldedo=-1):
+        with open(path) as f:
+            f.seek(pos,0)
+            edo = 0
+            s = ''
+            while True:
+                oldpos = f.tell()
+                oldedo = edo
+                c = f.read(1)
+                if not c or c.isspace():
+                    if self.isFinalState(oldedo):
+                        return True,oldpos,s
+                    return False,oldpos,s
+             
+                edo = self.qt[edo][ord(c)-1]
+                for camino in edo: #{0,2,3,("id",23)}
+                    if isinstance(camino, int ):
+                       
+                        edo = camino
+                        s+=c
+                        break
                     else:
-                        return False #TODO show error
-                else:
-                    i = i[0]
-                if self.isFinalState(i):
-                    pos = f.tell()-1
-                for path in i:
-                    if isinstance(path, str):
-                        i = path
-                    if self.isFinalState(i):
-                        pos = f.tell()-1
-                    else:
-                        pos = AUTOMATAS[path[0]].checkNested(f)
-                        if pos > -1:
-                            i = i[1]
-                            f.seek(pos,0)
-                    else:
-                        continue #TODO show error
-                continue
-            else:
-                return pos
-
-    def checkMain(self, f):
-        i = 0
-        s = ''
-        f.seek(f.tell()-1, 0)
-        while True:
-            c = f.read(1)
-            s+=c
-            if not c or c.isspace():
-                if self.isFinalState(i):
-                    return s
-            #print("Read a char:", c)
-            code = ord(c)-1
-            if  self.qt[i][code]:
-                i = self.qt[i][code] 
-                for path in i:
-                    if isinstance(path, str):
-                        i = path
-                    else:
-                        res = AUTOMATAS[path[0]].checkNested(f)
-                        if res == -1:
-                            i = i[1]
-                            f.seek(f.tell()-1,0)
-                    else:
-                        continue #TODO show error
-                continue
-            else:
-                while True:
-                    c = f.read(1)
-                    if not c or c.isspace():
-                        return False
+                        aut = AUTOMATAS[camino[0]]
+                        res = camino[1]
+                        intento = aut.checarToken(path,f.tell()-1,oldpos,oldedo)
+                        if intento[0]:
+                            edo = res
+                            f.seek(intento[1],0)
+                            s+=intento[2]
+                            break
+                if not edo or not isinstance(edo, int ):
+                    if self.isFinalState(oldedo):
+                        return True,oldpos,s
+                    return False,oldpos,s
+                
         
 
     def __repr__(self):
         a = ' {} (fi = {}, len_qt ={}, F = {})\n'.format(
             self.__class__.__name__, self.firstInput, len(self.qt), self.F)
-        import numpy as np
-        x = np.array(self.qt)
-        a += str(x)
         return a
 
 def getAutomata(ident):
     if ident in AUTOMATAS:
-        return AUTOMATAS[ident.ident]
+        return AUTOMATAS[ident]
     return False
 
 #crea los automatas a usar para el analizador lexico
 def createAutomata(ident, expr):
     
-    i = 0
+    a = 0
     de = 0
     aut = DFA(ident)
     wasNonTerminal = False
     wasOp = False
     shorthand = False
     nextAsChar = False
+    ident = None
     s = '' 
     for c in expr:
         if wasNonTerminal:
@@ -164,28 +129,23 @@ def createAutomata(ident, expr):
             if c != '}':
                 s+=c
                 continue
+            print(s)
             nested = getAutomata(s)
+            print(nested)
             if nested:
-                if wasOp:
-                    aut.addNextTransition(nested.fi,0,ident = s)
-                    aut.addFirstInput(nested.fi)
-                else:
-                    aut.addNextTransition(nested.fi,i,ident = s)
-                nextAsChar = False
-                wasOp = False
-                i += 1
-                continue
+                ident = s
+                c ="".join(nested.firstInput)
             else:
                 raise RuntimeError('no rule defined') from ValueError
         if c.isspace():
             continue
         if shorthand:
-            aut.addNextShorthandTransition(c,i)
+            aut.addNextShorthandTransition(c,de,a)
         if c == '{'and  not nextAsChar:
             if(wasNonTerminal):
                  raise RuntimeError('nested non-terminals ') from ValueError
             wasNonTerminal = True
-            # TODO add check symbol was defined
+            continue
         if c == '\\'and not nextAsChar:
             nextAsChar = True
             continue
@@ -194,82 +154,55 @@ def createAutomata(ident, expr):
             continue
         if c == '+' and not nextAsChar:
             # past was final state
-            if(wasOp):
+            if wasOp and de==a:
+                 raise RuntimeError('duplicate assigment') from ValueError
+            if wasOp:
                 raise RuntimeError('two add ops together') from ValueError
-            aut.addFinalState(i)
+            
+            aut.addFinalState(a)
+            de = 0
             wasOp = True
             continue
-        if wasOp:
-           print("next tran",i," ",c)
-           if not aut.addNextTransition(c,de,i):
-               de+=1
-               continue
-           aut.addFirstInput(c)
-        else:
-            print("next tran",i," ",c)
-            if not aut.addNextTransition(c, i):
-                continue
-        if i == 0:
+        added = aut.addNextTransition(c,de,a,ident)
+        if not added[0]:
+            for el in added[1]:
+             de= el
+            continue
+        if de == 0 and not ident:
             aut.addFirstInput(c)
-      
-        nextAsChar = False
+        elif de==0:
+             aut.addFirstInput(ident)
+        a += 1
+        de = a
+        wasNonTerminal = False
         wasOp = False
-        i += 1
-    if i != 0:
-        aut.addFinalState(i)
+        shorthand = False
+        nextAsChar = False
+        ident = None
+        s = '' 
+
+    if a != 0:
+        aut.addFinalState(a)
     else:
         raise RuntimeError('no rules defined') from ValueError
     return aut
 
 # agrega los automatas finitos al diccionario lexico
 tokenNum = 0
-def addAutomata(mid, expr):
+def addAutomata(mid, expr,use):
     global tokenNum 
     aut = createAutomata(mid,expr)
+    print("created... ")
     AUTOMATAS[mid] = aut
-    for el in aut.firstInput:
-        LEXDICT[ord(el)-1][mid] = aut 
-        #agrega automata para mid  al dict del analizador lexico
-        if mid not in RECTOKENS:
-            RECTOKENS[mid] =  tokenNum
-            tokenNum+=1
+    if use:
+        print("added... \n ",aut)
+        for el in aut.firstInput:
+            LEXDICT[ord(el)-1][mid] = aut 
+            #agrega automata para mid  al dict del analizador lexico
+            if mid not in RECTOKENS:
+                RECTOKENS[mid] =  tokenNum
+                tokenNum+=1
 
-
-##TODO analizador sintactico 
-### el archivo de reglas sintacticas NO debe tener simbolos terminales
-### el archivo de reglas sintactias solo debe tener identificadores que coincidan con los del archivo de reglas lexicas con la siguiente estructura 
-####A:([{token lexico}]|[{{simbolo no terminal sintactico}}])+
-#### el token stream tendra la siguiente estrucutra
-# codigo(|valor)?
-# ejemplo:
-# 0
-# 1
-# 2
-# 3|hola
-# 4
-# 5|adios
-# 3|tre
-# 2
-# 3
-# 4
-#TODO crear automata sintactico
-## lee el arhivo de reglas sintacticas
-##regla n
-###divide regla en id y expr
-###se crea el automata a partir de expr
-#####leer expr letra por letra 
-######reconocer tokens como simbolos  terminales
-#######estos empiezan con { y terminan con }
-########una vez reconocido el interior se busca en el dict de tokens
-######### si es encontrado se usa el valor definido como input en el automata
-########## se construye usando la misma sintaxis qu el automa lexico
-###########al final termina un dictionario sintactico tal como el lexico
-
-##TODO parsear token stream
-##leer letra  por letra 
-##se divide en num y val
-##se toma el num y se usa de input en el automata sintactico
-## se valida que el stream fue  valido en el automata sintactico
 
 
 
@@ -289,8 +222,6 @@ def write2TokenStream(ident, val):
     # 3
     # 4
 
-
-
 # test rules
 # prueba el archivo usando el diccionario lexico previamente creado
 def test():
@@ -308,12 +239,22 @@ def test():
             autDict = LEXDICT[ord(c)-1]
             for k, v in autDict.items():
                 currentKey = k
-                found = v.checkMain(f)
-                if found:
+                #print(k, " ",f.tell()-1, c)
+                found = v.checarToken(INFILE,f.tell()-1)
+                if found[0]:
                     write2TokenStream(currentKey,found)
                     print("Found symbol = ", currentKey , "val = ", found)
-                else:
-                    print("no rule for symbol was found")
+                    f.seek(found[1])
+                    # while True:
+                    #     c = f.read(1)
+                    #     if not c:
+                    #         print("\nEnd of file\n")
+                    #         return
+                    #     if  c.isspace():
+                    #         break
+                    # break
+                # else:
+                #     print("no rule for symbol was found = ")
 
 # read lexical rules
 with open(FILENAME) as f:
@@ -324,25 +265,12 @@ with open(FILENAME) as f:
             break
         print("Read a line:", l)
         import re
-        p = re.compile('(?P<id>[A-Za-z0-9]+)::(?P<expr>.+)')
+        p = re.compile(r'(?P<use>[\*]?)(?P<id>[A-Za-z0-9]+)::(?P<expr>.+)')
         m = p.match(l)
+        use = m.group('use')
+        if use:
+            print('use ',use)
         mid = m.group('id')
         expr = m.group('expr')
-        addAutomata(mid, expr)
+        addAutomata(mid, expr,use)
 test()
-
-# print(" ".isspace())
-# print("a".isspace())
-# print("\t".isspace())
-# import re
-# p = re.compile('(?P<id>[A-Za-z0-9]+)::(?P<expr>.+)')
-# m = p.match("hi::bre::u")
-# mid = m.group('id')
-# expr = m.group('expr')
-# addAutomata(mid, expr)
-# lista  = [[x for x in range(0,127)] ]
-# lista.append([x*2 for x in range(0,127)])
-# a = 'c'
-# print(len(lista))
-# w = []
-# len(w)

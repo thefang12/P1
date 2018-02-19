@@ -1,6 +1,6 @@
-if(b = 0 ){
-    var x = 0;
-}
-while(b = 1 ){
-    var x = 1;
-}
+if
+case
+broke
+fi
+ifr 
+vfr
